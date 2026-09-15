@@ -1,4 +1,4 @@
-﻿/**
+/**
  * PDFusion — Suite de herramientas PDF
  * Hecho por SystemMp · 2026
  */
@@ -546,7 +546,8 @@ document.getElementById('easterEgg').addEventListener('click', e => {
 // ============================================================
 let bgFile = null;
 let bgResultBlob = null;
-const BG_CDN = 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/browser/';
+const BG_SCRIPT_URL = 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/+esm';
+const BG_DATA_URL = 'https://unpkg.com/@imgly/background-removal-data@1.4.5/dist/';
 
 const bgDropZone   = document.getElementById('bgDropZone');
 const bgFileInput  = document.getElementById('bgFileInput');
@@ -594,14 +595,14 @@ bgProcessBtn.addEventListener('click', async () => {
   try {
     setProg(5, 'Cargando libreria...');
     // Dynamic ESM import from CDN
-    const mod = await import(BG_CDN + 'index.js');
+    const mod = await import(BG_SCRIPT_URL);
     const removeBackground = mod.removeBackground || mod.default;
 
     setProg(15, 'Descargando modelo (primera vez ~50 MB)...');
     progressTitle.textContent = 'Quitando fondo...';
 
     bgResultBlob = await removeBackground(bgFile, {
-      publicPath: BG_CDN,
+      publicPath: BG_DATA_URL,
       progress: (key, cur, total) => {
         if (total > 0) {
           const pct = 15 + Math.round((cur / total) * 75);
