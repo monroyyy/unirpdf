@@ -605,6 +605,8 @@ bgProcessBtn.addEventListener('click', async () => {
 
     bgResultBlob = await removeBackground(bgFile, {
       publicPath: BG_DATA_URL,
+      proxyToWorker: false,
+      model: 'small',
       progress: (key, cur, total) => {
         if (total > 0) {
           const pct = 15 + Math.round((cur / total) * 75);
@@ -635,9 +637,9 @@ bgProcessBtn.addEventListener('click', async () => {
     hideProg();
     console.error(e);
     if (e.message && e.message.includes('import')) {
-      toast('Error de conexion: necesitas internet para cargar el modelo la primera vez', 'error');
+      toast('Error de conexion: necesitas internet para cargar el modelo', 'error');
     } else {
-      toast('Error al quitar el fondo. Prueba con otra imagen.', 'error');
+      toast('Error: ' + (e.message || 'Desconocido'), 'error');
     }
   }
 });
