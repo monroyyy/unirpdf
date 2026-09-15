@@ -333,10 +333,9 @@
   <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   
-  <!-- Inline module to bypass file:// dynamic import restrictions -->
-  <script type="module">
-    import * as imgly from 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/+esm';
-    window.imglyRemoveBackground = imgly.removeBackground || imgly.default;
+  <script src="imgly-umd.js"></script>
+  <script>
+    window.imglyRemoveBackground = window.imgly ? (window.imgly.removeBackground || window.imgly.default) : null;
   </script>
   
   <script src="app.js?v=3"></script>
