@@ -593,10 +593,12 @@ bgProcessBtn.addEventListener('click', async () => {
   if (!bgFile) return;
   showProg('Preparando modelo de IA...');
   try {
-    setProg(5, 'Cargando libreria...');
-    // Dynamic ESM import from CDN
-    const mod = await import(BG_SCRIPT_URL);
-    const removeBackground = mod.removeBackground || mod.default;
+    if (!window.imglyRemoveBackground) {
+      toast('Cargando libreria... intenta de nuevo en unos segundos', 'info');
+      hideProg();
+      return;
+    }
+    const removeBackground = window.imglyRemoveBackground;
 
     setProg(15, 'Descargando modelo (primera vez ~50 MB)...');
     progressTitle.textContent = 'Quitando fondo...';
