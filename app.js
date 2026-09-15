@@ -1,4 +1,4 @@
-﻿/**
+/**
  * UnirPDF - Aplicacion para unir archivos PDF
  * Funciona 100% en el navegador usando pdf-lib
  */
@@ -253,3 +253,32 @@ function showToast(msg, type = 'info') {
     setTimeout(() => toast.remove(), 350);
   }, 4000);
 }
+
+// ====== EASTER EGG: KONAMI CODE ======
+// Secuencia: ↑ ↑ ↓ ↓ ← → ← → B A
+const KONAMI = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+let konamiIdx = 0;
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === KONAMI[konamiIdx]) {
+    konamiIdx++;
+    if (konamiIdx === KONAMI.length) {
+      konamiIdx = 0;
+      showEasterEgg();
+    }
+  } else {
+    konamiIdx = e.key === KONAMI[0] ? 1 : 0;
+  }
+});
+
+const easterEgg = document.getElementById('easterEgg');
+const eeClose   = document.getElementById('eeClose');
+
+function showEasterEgg() {
+  easterEgg.classList.add('active');
+}
+eeClose.addEventListener('click', () => easterEgg.classList.remove('active'));
+easterEgg.addEventListener('click', (e) => {
+  if (e.target === easterEgg) easterEgg.classList.remove('active');
+});
+
