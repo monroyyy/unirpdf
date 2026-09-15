@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -79,6 +79,13 @@
           </div>
           <h3 class="tool-card-title">Eliminar paginas</h3>
           <p class="tool-card-desc">Borra paginas especificas de un PDF y descarga el resultado.</p>
+        </button>
+        <button class="tool-card" data-tool="bgremove">
+          <div class="tool-card-icon" style="background:linear-gradient(135deg,#9333ea,#ec4899)">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>
+          </div>
+          <h3 class="tool-card-title">Quitar fondo</h3>
+          <p class="tool-card-desc">Elimina el fondo de una imagen con IA. 100% en tu navegador.</p>
         </button>
       </div>
     </div>
@@ -250,6 +257,50 @@
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
           Eliminar y descargar
         </button>
+      </div>
+    </div>
+
+    <!-- ===== PANEL: QUITAR FONDO ===== -->
+    <div id="panelBgremove" class="tool-panel" style="display:none">
+      <button class="btn-back" id="backBgremove"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> Volver</button>
+      <div class="tool-header">
+        <div class="tool-header-icon" style="background:linear-gradient(135deg,#9333ea,#ec4899)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg></div>
+        <div><h2 class="tool-title">Quitar fondo</h2><p class="tool-subtitle">Elimina el fondo de cualquier imagen con IA, todo en tu navegador.</p></div>
+      </div>
+      <div class="drop-zone drop-single" id="bgDropZone">
+        <div class="drop-zone-content">
+          <p class="drop-title">Arrastra tu imagen aqui</p>
+          <p class="drop-subtitle">JPG, PNG, WEBP &middot; haz clic para seleccionar</p>
+          <button class="btn-select btn-select-pink" id="bgSelectBtn">Seleccionar imagen</button>
+        </div>
+        <input type="file" id="bgFileInput" accept="image/jpeg,image/png,image/webp" hidden />
+      </div>
+      <div id="bgSection" style="display:none">
+        <div class="bg-warning">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Primera vez: se descarga el modelo de IA (~50 MB, se guarda en cache automaticamente)
+        </div>
+        <div class="bg-compare" id="bgCompare">
+          <div class="bg-pane">
+            <span class="bg-label">Original</span>
+            <img id="bgOriginalImg" alt="Original" />
+          </div>
+          <div class="bg-pane" id="bgResultPane" style="display:none">
+            <span class="bg-label">Sin fondo</span>
+            <div class="checker-wrap"><img id="bgResultImg" alt="Sin fondo" /></div>
+          </div>
+        </div>
+        <div class="bg-actions">
+          <button class="btn-action" id="bgProcessBtn" style="background:linear-gradient(135deg,#9333ea,#ec4899);box-shadow:0 6px 30px rgba(147,51,234,0.45)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>
+            Quitar fondo con IA
+          </button>
+          <button class="btn-action" id="bgDownloadBtn" style="display:none;background:linear-gradient(135deg,#059669,#10b981);box-shadow:0 6px 30px rgba(5,150,105,0.45)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Descargar PNG
+          </button>
+          <button class="btn-back btn-reset" id="bgResetBtn" style="display:none">Nueva imagen</button>
+        </div>
       </div>
     </div>
 

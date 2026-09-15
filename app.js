@@ -540,3 +540,120 @@ document.getElementById('eeClose').addEventListener('click', () => document.getE
 document.getElementById('easterEgg').addEventListener('click', e => {
   if(e.target===document.getElementById('easterEgg')) document.getElementById('easterEgg').classList.remove('active');
 });
+
+// ============================================================
+// TOOL 6: QUITAR FONDO (IA — @imgly/background-removal)
+// ============================================================
+let bgFile = null;
+let bgResultBlob = null;
+const BG_CDN = 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/browser/';
+
+const bgDropZone   = document.getElementById('bgDropZone');
+const bgFileInput  = document.getElementById('bgFileInput');
+const bgSection    = document.getElementById('bgSection');
+const bgProcessBtn = document.getElementById('bgProcessBtn');
+const bgDownloadBtn= document.getElementById('bgDownloadBtn');
+const bgResetBtn   = document.getElementById('bgResetBtn');
+const bgOriginalImg= document.getElementById('bgOriginalImg');
+const bgResultImg  = document.getElementById('bgResultImg');
+const bgResultPane = document.getElementById('bgResultPane');
+
+// Navigation
+document.getElementById('backBgremove').addEventListener('click', backToHome);
+
+// Drop zone
+document.getElementById('bgSelectBtn').addEventListener('click', e => { e.stopPropagation(); bgFileInput.click(); });
+bgDropZone.addEventListener('click', e => { if(!e.target.closest('button')) bgFileInput.click(); });
+setupDrop(bgDropZone, bgFileInput, files => {
+  const f = files.find(f => f.type.startsWith('image/'));
+  if (f) bgLoad(f);
+});
+
+function bgLoad(file) {
+  bgFile = file;
+  bgResultBlob = null;
+
+  // Reset UI
+  bgResultPane.style.display = 'none';
+  bgDownloadBtn.style.display = 'none';
+  bgResetBtn.style.display = 'none';
+  bgProcessBtn.style.display = 'flex';
+
+  // Show original preview
+  const url = URL.createObjectURL(file);
+  bgOriginalImg.src = url;
+  bgOriginalImg.onload = () => URL.revokeObjectURL(url);
+
+  bgDropZone.style.display = 'none';
+  bgSection.style.display = 'block';
+}
+
+bgProcessBtn.addEventListener('click', async () => {
+  if (!bgFile) return;
+  showProg('Preparando modelo de IA...');
+  try {
+    setProg(5, 'Cargando libreria...');
+    // Dynamic ESM import from CDN
+    const mod = await import(BG_CDN + 'index.js');
+    const removeBackground = mod.removeBackground || mod.default;
+
+    setProg(15, 'Descargando modelo (primera vez ~50 MB)...');
+    progressTitle.textContent = 'Quitando fondo...';
+
+    bgResultBlob = await removeBackground(bgFile, {
+      publicPath: BG_CDN,
+      progress: (key, cur, total) => {
+        if (total > 0) {
+          const pct = 15 + Math.round((cur / total) * 75);
+          setProg(Math.min(pct, 90), 'Procesando modelo...');
+        }
+      },
+    });
+
+    setProg(95, 'Generando resultado...');
+    await new Promise(r => setTimeout(r, 200));
+
+    // Show result
+    const resUrl = URL.createObjectURL(bgResultBlob);
+    bgResultImg.src = resUrl;
+    bgResultImg.onload = () => URL.revokeObjectURL(resUrl);
+    bgResultPane.style.display = 'block';
+
+    // Swap buttons
+    bgProcessBtn.style.display = 'none';
+    bgDownloadBtn.style.display = 'flex';
+    bgResetBtn.style.display = 'flex';
+
+    setProg(100, 'Listo!');
+    await new Promise(r => setTimeout(r, 300));
+    hideProg();
+    toast('Fondo eliminado con exito', 'success');
+  } catch (e) {
+    hideProg();
+    console.error(e);
+    if (e.message && e.message.includes('import')) {
+      toast('Error de conexion: necesitas internet para cargar el modelo la primera vez', 'error');
+    } else {
+      toast('Error al quitar el fondo. Prueba con otra imagen.', 'error');
+    }
+  }
+});
+
+bgDownloadBtn.addEventListener('click', () => {
+  if (!bgResultBlob) return;
+  const base = bgFile.name.replace(/\.[^.]+$/, '');
+  download(bgResultBlob, base + '-sin-fondo.png');
+  toast('Imagen descargada como PNG', 'success');
+});
+
+bgResetBtn.addEventListener('click', () => {
+  bgFile = null; bgResultBlob = null;
+  bgOriginalImg.src = '';
+  bgResultImg.src = '';
+  bgResultPane.style.display = 'none';
+  bgDownloadBtn.style.display = 'none';
+  bgResetBtn.style.display = 'none';
+  bgProcessBtn.style.display = 'flex';
+  bgSection.style.display = 'none';
+  bgDropZone.style.display = 'block';
+});
